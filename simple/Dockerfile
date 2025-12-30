@@ -1,27 +1,20 @@
-# Official Dart image: https://hub.docker.com/_/dart
-# Specify the Dart SDK base image version using dart:<version> (ex: dart:2.12)
-FROM dart:stable AS build
+# Use the official Dart image
+FROM dart:stable
 
-# Resolve app dependencies.
+# Set working directory
 WORKDIR /app
+
+# Copy pubspec files first for better layer caching
 COPY pubspec.* ./
+
+# Install dependencies
 RUN dart pub get
 
-# Copy app source code and AOT compile it.
+# Copy the rest of the application
 COPY . .
-# Ensure packages are still up-to-date if anything has changed
-RUN dart pub get --offline
-RUN dart compile exe bin/server.dart -o bin/server
 
-# Build minimal serving image from AOT-compiled `/server` and required system
-# libraries and configuration files stored in `/runtime/` from the build stage.
-FROM scratch
-COPY --from=build /runtime/ /
-COPY --from=build /app/bin/server /app/bin/
-
-# Include files in the /public directory to enable static asset handling
-COPY --from=build /app/public/ /public
-
-# Start server.
+# Expose the port the app runs on
 EXPOSE 8080
-CMD ["/app/bin/server"]
+
+# Start the server in development mode
+CMD ["dart", "run", "bin/server.dart"]

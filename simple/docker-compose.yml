@@ -1,9 +1,13 @@
-version: '3'
+version: '3.8'
+
 services:
   server:
     build: .
     ports:
       - "8080:8080"
     volumes:
-      - .:/app  # Синхронизирует изменения в коде с контейнером
-    command: /app/bin/server
+      - .:/app
+    working_dir: /app
+    environment:
+      - DART_ENV=development
+    command: sh -c "dart pub get && dart run bin/server.dart"
