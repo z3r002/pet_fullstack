@@ -10,6 +10,7 @@ dependencies:
   shelf_static: ^1.1.0
   json_annotation: ^4.8.1
   uuid: ^4.5.0
+  postgres: ^3.5.7
 
 
 dev_dependencies:

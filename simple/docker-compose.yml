@@ -10,4 +10,21 @@ services:
     working_dir: /app
     environment:
       - DART_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/petdb
+    depends_on:
+      - db
     command: sh -c "dart pub get && dart run bin/server.dart"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=petdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
